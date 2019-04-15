@@ -19,7 +19,7 @@ class FrontHandler : ChannelInboundHandlerAdapter() {
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
         GlobalScope.launch {
             var content: ByteArray? = null
-            
+
             BackChannelPool.acquire(ctx.channel()).forEach {
                 if (content == null) {
                     val buf = msg as ByteBuf
@@ -29,6 +29,11 @@ class FrontHandler : ChannelInboundHandlerAdapter() {
                 }
 
                 it.backChannel.writeAndFlush(Unpooled.wrappedBuffer(content))
+            }
+
+            if (content == null) {
+                val buf = msg as ByteBuf
+                buf.release()
             }
         }
     }

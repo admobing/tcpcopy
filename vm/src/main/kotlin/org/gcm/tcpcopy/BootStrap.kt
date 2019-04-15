@@ -24,6 +24,8 @@ fun main(args: Array<String>) = mainBody("tcpcopy") {
             return@run
         }
 
+        println(backendList)
+
         BackChannelPool.build(backendList)
         Server(port).start()
     }
