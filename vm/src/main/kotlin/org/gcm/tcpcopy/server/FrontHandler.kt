@@ -17,13 +17,17 @@ class FrontHandler : ChannelInboundHandlerAdapter() {
     }
 
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
-        val buf = msg as ByteBuf
-        val content = ByteArray(buf.readableBytes())
-        buf.readBytes(content)
-        msg.release()
-
         GlobalScope.launch {
+            var content: ByteArray? = null
+            
             BackChannelPool.acquire(ctx.channel()).forEach {
+                if (content == null) {
+                    val buf = msg as ByteBuf
+                    content = ByteArray(buf.readableBytes())
+                    buf.readBytes(content)
+                    msg.release()
+                }
+
                 it.backChannel.writeAndFlush(Unpooled.wrappedBuffer(content))
             }
         }
