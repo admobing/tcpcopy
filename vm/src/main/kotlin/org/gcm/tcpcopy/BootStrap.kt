@@ -4,7 +4,7 @@ import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
 import com.xenomachina.argparser.mainBody
 import org.gcm.tcpcopy.bean.Backend
-import org.gcm.tcpcopy.forward.BackChannelPool
+import org.gcm.tcpcopy.forward.BackChannelManage
 import org.gcm.tcpcopy.server.Server
 
 class Args(parser: ArgParser) {
@@ -26,7 +26,7 @@ fun main(args: Array<String>) = mainBody("tcpcopy") {
 
         println(backendList)
 
-        BackChannelPool.build(backendList)
+        BackChannelManage.setBackendList(backendList)
         Server(port).start()
     }
 }
